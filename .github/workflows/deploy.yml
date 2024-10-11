@@ -17,13 +17,18 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 'v22.8.0'  
+        node-version: '22.8.0'  # Set the Node.js version to 22.8.0
 
     - name: Install dependencies
       run: npm install  # Installs dependencies from package.json
 
     - name: Build the project
       run: npm run build  # Runs the predeploy script (which runs "npm run build")
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
 
     - name: Deploy to GitHub Pages
       run: npm run deploy  # Runs "gh-pages -d build" to deploy the build folder
