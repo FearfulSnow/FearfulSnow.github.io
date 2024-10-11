@@ -1,16 +1,32 @@
 name: Deploy React App to GitHub Pages
 
 on:
-    release:
-        types: [published]  # Trigger the workflow when a new release is published
+  release:
+    types: [published]  # Trigger the workflow when a new release is published
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Build and Deploy React app to GitHub Pages
-        uses: omkartapale/react-deployment-gh-pages@v1.0.0
+      - name: Checkout main branch
+        uses: actions/checkout@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}  # Authentication token for pushing to gh-pages
-          branch: gh-pages  # Specify the branch to deploy to
+          ref: main  # Checkout the main branch
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.8.0'
+
+      - name: Install dependencies
+        run: npm install  # Installs dependencies from package.json
+
+      - name: Build the project
+        run: npm run build  # Builds the project
+
+      - name: Deploy to GitHub Pages
+        run: |
+          git remote set-url origin https://git:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          npm run deploy -- -u "github-actions-bot <support+action@github.com>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use the GitHub token for authentication
